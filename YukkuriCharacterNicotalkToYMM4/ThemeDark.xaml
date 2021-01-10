@@ -1,0 +1,33 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="using:Styles">
+
+	<!-- 全体 -->
+	<x:String x:Key="SKAbackground">#ff373737</x:String>
+	<x:String x:Key="SKAforeground">#ffffffff</x:String>
+
+	<!-- TextBox -->
+	<x:String x:Key="SKAtextboxBackground">#ff555555</x:String>
+	<x:String x:Key="SKAtextboxBorder">#ff404040</x:String>
+	<x:String x:Key="SKAtextboxSelect">#ff3f638b</x:String>
+	<SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="{ThemeResource SKAtextboxBackground}"/>
+	<SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="{ThemeResource SKAforeground}"/>
+	<SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="{ThemeResource SKAtextboxBorder}"/>
+	<SolidColorBrush x:Key="TextControlBackgroundFocused" Color="{ThemeResource SKAtextboxBackground}"/>
+	<SolidColorBrush x:Key="TextControlForegroundFocused" Color="{ThemeResource SKAforeground}"/>
+	<SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#ff2e72a2"/>
+
+	<!-- Button -->
+	<x:String x:Key="SKAbuttonBackground">#ff606060</x:String>
+	<x:String x:Key="SKAbuttonBorder">#ff303030</x:String>
+	<x:String x:Key="SKAbuttonBackgroundBlue">#ff3e85f7</x:String>
+	<x:String x:Key="SKAbuttonForeground">#ffffffff</x:String>
+	<SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{ThemeResource SKAbuttonBackground}"/>
+	<SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="{ThemeResource SKAforeground}"/>
+	<SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="{ThemeResource SKAbuttonBorder}"/>
+	<SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{ThemeResource SKAbuttonBackgroundBlue}"/>
+	<SolidColorBrush x:Key="ButtonForegroundPressed" Color="{ThemeResource SKAbuttonForeground}"/>
+	<SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="{ThemeResource SKAbackground}"/>
+
+</ResourceDictionary>

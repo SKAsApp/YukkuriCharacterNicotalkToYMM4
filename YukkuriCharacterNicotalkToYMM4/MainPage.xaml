@@ -1,0 +1,76 @@
+﻿<Page
+	x:Class="YukkuriCharacterNicotalkToYMM4.MainPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="using:YukkuriCharacterNicotalkToYMM4"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16">
+	<Page.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary Source="ThemeDark.xaml" x:Key="Dark"/>
+				<ResourceDictionary Source="ThemeLight.xaml" x:Key="Light"/>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+	</Page.Resources>
+	<Page.TopAppBar>
+		<CommandBar FontFamily="Yu Gothic" FontWeight="Medium" FontSize="11" VerticalAlignment="Stretch" DefaultLabelPosition="Right">
+			<CommandBar.Content>
+				<Grid/>
+			</CommandBar.Content>
+			<AppBarButton x:Name="CommandCopy" Icon="Copy" Label="コピー" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="11" Click="CommandCopyClick"/>
+			<AppBarButton x:Name="CommandPaste" Icon="Paste" Label="貼り付け" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="11" Click="CommandPasteClick"/>
+			<AppBarButton x:Name="CommandAbout" Label="このアプリについて" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="11" Click="CommandAboutClick">
+				<AppBarButton.Icon>
+					<FontIcon Glyph="ℹ"/>
+				</AppBarButton.Icon>
+			</AppBarButton>
+		</CommandBar>
+	</Page.TopAppBar>
+
+	<Grid Background="{ThemeResource SKAbackground}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="2*"/>
+			<ColumnDefinition Width="3*"/>
+			<ColumnDefinition Width="2*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="10*"/>
+			<RowDefinition Height="10*"/>
+			<RowDefinition Height="10*"/>
+		</Grid.RowDefinitions>
+
+		<!-- 0行目 -->
+		<TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"  Margin="0, 0, 32, 0" Text="変換元ディレクトリー：" TextWrapping="NoWrap" Foreground="{ThemeResource SKAforeground}"/>
+
+		<TextBox x:Name="TextBoxInput" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="0" Text="" TextWrapping="NoWrap" MinHeight="40" MinWidth="50" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16" CornerRadius="5, 5, 5, 5" IsSpellCheckEnabled="False" Background="{ThemeResource SKAtextboxBackground}" Foreground="{ThemeResource SKAforeground}" BorderBrush="{ThemeResource SKAtextboxBorder}" SelectionHighlightColor="{ThemeResource SKAtextboxSelect}"/>
+
+		<Button x:Name="ButtonInput" Content="選択" Grid.Row="0" Grid.Column="2" Margin="48,0,0,0" Click="ButtonInputClick" CornerRadius="5, 5, 5, 5" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16" MinWidth="112" MaxHeight="32" Background="{ThemeResource SKAbuttonBackground}" Foreground="{ThemeResource SKAforeground}" BorderBrush="{ThemeResource SKAbuttonBorder}"/>
+
+		<!-- 1行目 -->
+		<TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"  Margin="0,0,32,0" Text="出力先ディレクトリー：" TextWrapping="NoWrap" Foreground="{ThemeResource SKAforeground}" />
+
+		<TextBox x:Name="TextBoxOutput" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0" Text="" TextWrapping="NoWrap" MinHeight="40" MinWidth="50" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16" CornerRadius="5, 5, 5, 5" IsSpellCheckEnabled="False" Background="{ThemeResource SKAtextboxBackground}" Foreground="{ThemeResource SKAforeground}" BorderBrush="{ThemeResource SKAtextboxBorder}" SelectionHighlightColor="{ThemeResource SKAtextboxSelect}"/>
+
+		<Button x:Name="ButtonOutput" Content="選択" Grid.Row="1" Grid.Column="2" Margin="48,0,0,0" Click="ButtonOutputClick" CornerRadius="5, 5, 5, 5" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16" MinWidth="112" MaxHeight="32" Background="{ThemeResource SKAbuttonBackground}" Foreground="{ThemeResource SKAforeground}" BorderBrush="{ThemeResource SKAbuttonBorder}"/>
+
+		<!-- 2行目 -->
+		<Button x:Name="ButtonRun" Content="変換" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" Click="ButtonRunClick" CornerRadius="5, 5, 5, 5" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16" MinWidth="112" MaxHeight="32" Background="{ThemeResource SKAbuttonBackgroundBlue}" Foreground="{ThemeResource SKAbuttonForeground}" BorderBrush="{ThemeResource SKAbackground}">
+			<Button.Resources>
+				<ResourceDictionary>
+					<ResourceDictionary.ThemeDictionaries>
+						<ResourceDictionary x:Key="Default">
+							<SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{ThemeResource SKAbuttonBackgroundBlue}"/>
+							<SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="{ThemeResource SKAbuttonForeground}"/>
+							<SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="{ThemeResource SKAbackground}"/>
+						</ResourceDictionary>
+					</ResourceDictionary.ThemeDictionaries>
+				</ResourceDictionary>
+			</Button.Resources>
+		</Button>
+
+	</Grid>
+
+</Page>
