@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -29,17 +32,53 @@ namespace YukkuriCharacterNicotalkToYMM4
 
 		private void CommandCopyClick(object sender, RoutedEventArgs e)
 		{
-			
+			if (this.CopyToClipbord(TextBoxInput))
+			{
+				return;
+			}
+			this.CopyToClipbord(TextBoxOutput);
 		}
 
-		private void CommandPasteClick(object sender, RoutedEventArgs e)
+		private bool CopyToClipbord(TextBox textBox)
 		{
-
+			if (textBox.FocusState == FocusState.Pointer)
+			{
+				DataPackage dataPackage = new DataPackage( );
+				dataPackage.SetText(textBox.Text);
+				Clipboard.SetContent(dataPackage);
+				return true;
+			}
+			return false;
 		}
 
-		private void CommandAboutClick(object sender, RoutedEventArgs e)
+		private async void CommandPasteClick(object sender, RoutedEventArgs e)
 		{
+			DataPackageView dataPackageView = Clipboard.GetContent( );
+			Task<bool> textBoxInput = new Task<bool>( ( ) => false);
+			if (dataPackageView.Contains(StandardDataFormats.Text) && this.PasteFromClipbord(dataPackageView, TextBoxInput).Result)
+			{
+				return;
+			}
+			if (dataPackageView.Contains(StandardDataFormats.Text))
+			{
+				await this.PasteFromClipbord(dataPackageView, TextBoxOutput);
+			}
+		}
 
+		private async Task<bool> PasteFromClipbord(DataPackageView dataPackageView, TextBox textBox)
+		{
+			if (textBox.FocusState == FocusState.Pointer)
+			{
+				textBox.Text = await dataPackageView.GetTextAsync( );
+				return true;
+			}
+			return false;
+		}
+
+		private async void CommandAboutClick(object sender, RoutedEventArgs e)
+		{
+			DialogAbout dialogAbout = new DialogAbout( );
+			await dialogAbout.ShowAsync( );
 		}
 
 		private void ButtonInputClick(object sender, RoutedEventArgs e)
