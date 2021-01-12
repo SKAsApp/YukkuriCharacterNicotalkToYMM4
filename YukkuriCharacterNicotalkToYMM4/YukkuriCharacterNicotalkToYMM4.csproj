@@ -134,10 +134,14 @@
     <Compile Include="DialogAbout.xaml.cs">
       <DependentUpon>DialogAbout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DialogError.xaml.cs">
+      <DependentUpon>DialogError.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThemeController.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -160,6 +164,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="DialogAbout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DialogError.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

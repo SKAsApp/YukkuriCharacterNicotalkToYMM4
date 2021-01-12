@@ -7,8 +7,8 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
 	Title="ゆっくりムービーメーカー4形式に変換するヤツ について"
-	PrimaryButtonText="分かんない……"
-	SecondaryButtonText="分かった！"
+	PrimaryButtonText="🥺分かんない……"
+	SecondaryButtonText="😉分かった！"
 	PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
 	SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
 	FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16">
@@ -21,17 +21,17 @@
 		</ResourceDictionary>
 	</ContentDialog.Resources>
 
-	<Grid Background="{ThemeResource SKAbackground}">
-		<ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" Padding="0,0,24,0">
+	<Grid Background="{ThemeResource SKAbackground}" BorderBrush="#ff373737" BorderThickness="2">
+		<ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" Padding="6,3,24,3">
 			<TextBlock TextAlignment="Justify" TextWrapping="Wrap" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16" Foreground="{ThemeResource SKAforeground}" SelectionHighlightColor="{ThemeResource SKAtextboxSelect}" IsTextSelectionEnabled="True">
 				<Bold>正式名称：</Bold>「キャラ素材をnicotalk形式からゆっくりムービーメーカー4形式に変換するヤツ」<LineBreak/><LineBreak/>
 				<Bold>バージョン：</Bold>1.0.0<LineBreak/><LineBreak/>
-				<Bold>開発者：</Bold>SKA’s Web （Twitter <Hyperlink NavigateUri="https://twitter.com/SK_Animation" Foreground="{ThemeResource SKAlink}">@SK_Animation</Hyperlink>）<LineBreak/><LineBreak/>
+				<Bold>開発者：</Bold>SKA’s Web （🐤Twitter <Hyperlink NavigateUri="https://twitter.com/SK_Animation" Foreground="{ThemeResource SKAlink}">@SK_Animation</Hyperlink>）<LineBreak/><LineBreak/>
 				<Bold>使い方：</Bold><Hyperlink NavigateUri="https://github.com/SKAsApp/YukkuriCharacterNicotalkToYMM4" Foreground="{ThemeResource SKAlink}">https://github.com/SKAsApp/YukkuriCharacterNicotalkToYMM4</Hyperlink><LineBreak/>※ 注意事項は必ずお読みください。<LineBreak/><LineBreak/>
 				<Bold>ソースコード：</Bold>↑と同じ<LineBreak/><LineBreak/>
 				このアプリのソースコードはGPL v3のもと公開しています。<LineBreak/><LineBreak/>
 				このアプリを使ったことによる損害，キャラ素材の権利問題 等については開発者は一切責任を負いませんので，自己責任でお願いします。<LineBreak/><LineBreak/>
-				このアプリは商用利用も含め全て無料でお使いいただけますが，開発者に対する寄付も歓迎しています。
+				このアプリ自体は商用利用も含め全て無料でお使いいただけますが，キャラ素材がそうであるとは限りませんので，ご確認の上ご使用ください（変換後のキャラ素材も変換前の素材の利用規約が適用されます）。また，開発者に対する寄付も歓迎しています。
 			</TextBlock>
 		</ScrollViewer>
 	</Grid>

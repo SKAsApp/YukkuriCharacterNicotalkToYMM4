@@ -22,9 +22,14 @@
 			</CommandBar.Content>
 			<AppBarButton x:Name="CommandCopy" Icon="Copy" Label="コピー" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="11" Click="CommandCopyClick"/>
 			<AppBarButton x:Name="CommandPaste" Icon="Paste" Label="貼り付け" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="11" Click="CommandPasteClick"/>
+			<AppBarButton x:Name="CommandTheme" Label="配色切替え" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="11" Click="CommandThemeClick">
+				<AppBarButton.Icon>
+					<FontIcon FontFamily="Yu Gothic" FontWeight="Bold" Glyph="🌙"/>
+				</AppBarButton.Icon>
+			</AppBarButton>
 			<AppBarButton x:Name="CommandAbout" Label="このアプリについて" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="11" Click="CommandAboutClick">
 				<AppBarButton.Icon>
-					<FontIcon Glyph="ℹ"/>
+					<FontIcon FontFamily="Yu Gothic" FontWeight="Bold" Glyph="ℹ"/>
 				</AppBarButton.Icon>
 			</AppBarButton>
 		</CommandBar>

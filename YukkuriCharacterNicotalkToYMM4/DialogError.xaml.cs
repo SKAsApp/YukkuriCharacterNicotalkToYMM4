@@ -17,24 +17,15 @@ using Windows.UI.Xaml.Navigation;
 
 namespace YukkuriCharacterNicotalkToYMM4
 {
-	public sealed partial class DialogAbout: ContentDialog
+	public sealed partial class DialogError : ContentDialog
 	{
 		private ThemeController ThemeController;
 
-		public DialogAbout(ElementTheme theme)
+		public DialogError(ElementTheme theme, string errorMessage)
 		{
 			this.InitializeComponent( );
 			this.ThemeController = new ThemeController(theme, this);
-		}
-
-		private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-		{
-			Application.Current.Exit( );
-		}
-
-		private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-		{
-
+			this.ErrorMessage.Text = errorMessage;
 		}
 
 	}
