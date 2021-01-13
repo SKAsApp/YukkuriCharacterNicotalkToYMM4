@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using Serilog;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace YukkuriCharacterNicotalkToYMM4
@@ -14,6 +15,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		/// <param name="control">初期テーマを適用するUIコントロール</param>
 		public ThemeController(ElementTheme theme, Control control)
 		{
+			Log.Debug("ThemeController生成：theme：" + theme.ToString( ) + "，control：" + control.ToString( ) + "，OS：" + this.OSTheme.ToString( ));
 			this.SetInitialNowTheme(theme);
 			control.RequestedTheme = this.NowTheme;
 		}
@@ -22,6 +24,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		/// <param name="theme">初期テーマ</param>
 		public ThemeController(ElementTheme theme)
 		{
+			Log.Debug("ThemeController生成：theme：" + theme.ToString( ) + "，OS：" + this.OSTheme.ToString( ));
 			this.SetInitialNowTheme(theme);
 		}
 
@@ -29,6 +32,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		/// <param name="control">初期テーマを適用するUIコントロール</param>
 		public ThemeController(Control control)
 		{
+			Log.Debug("ThemeController生成：control：" + control.ToString( ) + "，OS：" + this.OSTheme.ToString( ));
 			this.SetInitialNowTheme(ElementTheme.Default);
 			control.RequestedTheme = this.NowTheme;
 		}
@@ -36,6 +40,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		/// <summary>テーマ管理者をOSテーマで初期化します。</summary>
 		public ThemeController( )
 		{
+			Log.Debug("ThemeController生成：OS：" + this.OSTheme.ToString( ));
 			this.SetInitialNowTheme(ElementTheme.Default);
 		}
 
@@ -62,6 +67,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		{
 			this.ChangeNowTheme( );
 			control.RequestedTheme = this.NowTheme;
+			Log.Debug("配色変更：" + control.ToString( ) + " を " + this.NowTheme + " へ");
 		}
 
 		/// <summary>NowThemeを反転させます。</summary>

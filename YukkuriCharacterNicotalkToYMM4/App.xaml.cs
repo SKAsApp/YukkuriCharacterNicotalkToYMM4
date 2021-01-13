@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Serilog;
+using Serilog.Events;
+using Serilog.Formatting.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +10,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -21,7 +25,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 	/// <summary>
 	/// 既定の Application クラスを補完するアプリケーション固有の動作を提供します。
 	/// </summary>
-	sealed partial class App : Application
+	sealed partial class App: Application
 	{
 		/// <summary>
 		///単一アプリケーション オブジェクトを初期化します。これは、実行される作成したコードの
@@ -31,6 +35,20 @@ namespace YukkuriCharacterNicotalkToYMM4
 		{
 			this.InitializeComponent( );
 			this.Suspending += this.OnSuspending;
+			this.SerilogSetting( );
+			Log.Information("アプリ起動");
+		}
+
+		private void SerilogSetting( )
+		{
+			string logFilePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, "logs/log.txt");
+			Log.Logger = new LoggerConfiguration( )
+				.MinimumLevel.Debug( )
+				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+				.MinimumLevel.Override("System", LogEventLevel.Warning)
+				.WriteTo.Debug( )
+				.WriteTo.File(path: logFilePath, formatter: new JsonFormatter( ), rollingInterval: RollingInterval.Day)
+				.CreateLogger( );
 		}
 
 		/// <summary>
@@ -99,6 +117,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		/// <param name="e">中断要求の詳細。</param>
 		private void OnSuspending(object sender, SuspendingEventArgs e)
 		{
+			Log.Debug("OnSuspending");
 			var deferral = e.SuspendingOperation.GetDeferral( );
 			//TODO: アプリケーションの状態を保存してバックグラウンドの動作があれば停止します
 			deferral.Complete( );

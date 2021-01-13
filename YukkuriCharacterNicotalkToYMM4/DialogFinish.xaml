@@ -1,13 +1,13 @@
 ﻿<ContentDialog
-	x:Class="YukkuriCharacterNicotalkToYMM4.DialogError"
+	x:Class="YukkuriCharacterNicotalkToYMM4.DialogFinish"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="using:YukkuriCharacterNicotalkToYMM4"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
-	Title="⚠️エラー"
-	CloseButtonText="👍了解"
+	Title="変換完了しました"
+	CloseButtonText="❤いいね！"
 	FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16">
 	<ContentDialog.Resources>
 		<ResourceDictionary>
@@ -19,10 +19,8 @@
 	</ContentDialog.Resources>
 
 	<Grid>
-		<ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" Padding="6,3,24,3">
-			<TextBlock x:Name="ErrorMessage" TextAlignment="Justify" TextWrapping="Wrap" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16" Foreground="{ThemeResource SKAforeground}" SelectionHighlightColor="{ThemeResource SKAtextboxSelect}" IsTextSelectionEnabled="True">
-				エラーメッセージ
-			</TextBlock>
-		</ScrollViewer>
+		<TextBlock x:Name="ErrorMessage" TextAlignment="Justify" TextWrapping="Wrap" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16" Foreground="{ThemeResource SKAforeground}" SelectionHighlightColor="{ThemeResource SKAtextboxSelect}" IsTextSelectionEnabled="True">
+			ゆっくりしていってね！！！
+		</TextBlock>
 	</Grid>
 </ContentDialog>

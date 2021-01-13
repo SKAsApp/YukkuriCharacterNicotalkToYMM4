@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 
 		public DialogAbout(ElementTheme theme)
 		{
+			Log.Information("DialogAbout生成");
 			this.InitializeComponent( );
 			this.ThemeController = new ThemeController(theme, this);
 		}

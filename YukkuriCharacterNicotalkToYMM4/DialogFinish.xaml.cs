@@ -6,16 +6,15 @@ using Windows.UI.Xaml.Controls;
 
 namespace YukkuriCharacterNicotalkToYMM4
 {
-	public sealed partial class DialogError: ContentDialog
+	public sealed partial class DialogFinish: ContentDialog
 	{
 		private ThemeController ThemeController;
 
-		public DialogError(ElementTheme theme, string errorMessage)
+		public DialogFinish(ElementTheme theme)
 		{
-			Log.Information("DialogError生成");
+			Log.Information("DialogFinish生成");
 			this.InitializeComponent( );
 			this.ThemeController = new ThemeController(theme, this);
-			this.ErrorMessage.Text = errorMessage;
 		}
 
 	}

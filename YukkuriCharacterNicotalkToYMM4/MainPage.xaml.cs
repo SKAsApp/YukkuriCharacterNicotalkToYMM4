@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -24,9 +26,13 @@ namespace YukkuriCharacterNicotalkToYMM4
 	public sealed partial class MainPage: Page
 	{
 		private ThemeController ThemeController;
+		private Models.FileIO FileIO = new Models.FileIO( );
+		private StorageFolder DirectoryInput;
+		private StorageFolder DirectoryOutput;
 
 		public MainPage( )
 		{
+			Log.Information("MainPage生成");
 			this.InitializeComponent( );
 			this.ThemeController = new ThemeController(this);
 		}
@@ -34,6 +40,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		/// <summary>コマンドバーのコピーを押したとき。</summary>
 		private void CommandCopyClick(object sender, RoutedEventArgs e)
 		{
+			Log.Information("CommandCopyClick");
 			if (this.CopyToClipbord(this.TextBoxInput))
 			{
 				return;
@@ -51,49 +58,52 @@ namespace YukkuriCharacterNicotalkToYMM4
 				DataPackage dataPackage = new DataPackage( );
 				dataPackage.SetText(textBox.Text);
 				Clipboard.SetContent(dataPackage);
+				Log.Debug("クリップボードコピー：" + textBox.Text);
 				return true;
 			}
 			return false;
 		}
 
-		/// <summary>コマンドバーの貼り付けを押したとき。</summary>
-		private async void CommandPasteClick(object sender, RoutedEventArgs e)
-		{
-			DataPackageView dataPackageView = Clipboard.GetContent( );
-			Task<bool> textBoxInput = new Task<bool>( ( ) => false);
-			if (dataPackageView.Contains(StandardDataFormats.Text) && await this.PasteFromClipbord(dataPackageView, this.TextBoxInput))
-			{
-				return;
-			}
-			if (dataPackageView.Contains(StandardDataFormats.Text))
-			{
-				await this.PasteFromClipbord(dataPackageView, this.TextBoxOutput);
-			}
-		}
+		///// <summary>コマンドバーの貼り付けを押したとき。</summary>
+		//private async void CommandPasteClick(object sender, RoutedEventArgs e)
+		//{
+		//	DataPackageView dataPackageView = Clipboard.GetContent( );
+		//	Task<bool> textBoxInput = new Task<bool>( ( ) => false);
+		//	if (dataPackageView.Contains(StandardDataFormats.Text) && await this.PasteFromClipbord(dataPackageView, this.TextBoxInput))
+		//	{
+		//		return;
+		//	}
+		//	if (dataPackageView.Contains(StandardDataFormats.Text))
+		//	{
+		//		await this.PasteFromClipbord(dataPackageView, this.TextBoxOutput);
+		//	}
+		//}
 
-		/// <summary>クリップボードから貼り付けます。</summary>
-		/// <param name="dataPackageView">クリップボードのDataPackageViewインスタンス</param>
-		/// <param name="textBox">どのテキストボックスに貼り付けるか</param>
-		/// <returns>引数のテキストボックスに貼り付けたか（＝フォーカスがあったか）</returns>
-		private async Task<bool> PasteFromClipbord(DataPackageView dataPackageView, TextBox textBox)
-		{
-			if (textBox.FocusState == FocusState.Pointer)
-			{
-				textBox.Text = await dataPackageView.GetTextAsync( );
-				return true;
-			}
-			return false;
-		}
+		///// <summary>クリップボードから貼り付けます。</summary>
+		///// <param name="dataPackageView">クリップボードのDataPackageViewインスタンス</param>
+		///// <param name="textBox">どのテキストボックスに貼り付けるか</param>
+		///// <returns>引数のテキストボックスに貼り付けたか（＝フォーカスがあったか）</returns>
+		//private async Task<bool> PasteFromClipbord(DataPackageView dataPackageView, TextBox textBox)
+		//{
+		//	if (textBox.FocusState == FocusState.Pointer)
+		//	{
+		//		textBox.Text = await dataPackageView.GetTextAsync( );
+		//		return true;
+		//	}
+		//	return false;
+		//}
 
 		/// <summary>コマンドバーの配色切替えを押したとき。</summary>
 		private void CommandThemeClick(object sender, RoutedEventArgs e)
 		{
+			Log.Information("CommandThemeClick");
 			this.ThemeController.ChangeTheme(this);
 		}
 
 		/// <summary>コマンドバーのについてを押したとき。</summary>
 		private async void CommandAboutClick(object sender, RoutedEventArgs e)
 		{
+			Log.Information("CommandAboutClick");
 			DialogAbout dialogAbout = new DialogAbout(this.ThemeController.NowTheme);
 			await dialogAbout.ShowAsync( );
 		}
@@ -101,45 +111,89 @@ namespace YukkuriCharacterNicotalkToYMM4
 		/// <summary>変換元の選択ボタンを押したとき。</summary>
 		private async void ButtonInputClick(object sender, RoutedEventArgs e)
 		{
-			string path = await this.SelectFolder( );
-			if (path != "")
+			Log.Information("ButtonInputClick");
+			this.DirectoryInput = await this.SelectFolder(Models.EDirectoryType.Input);
+			if (this.DirectoryInput != null)
 			{
-				this.TextBoxInput.Text = path;
+				this.TextBoxInput.Text = this.DirectoryInput.Path;
 			}
 		}
 
 		/// <summary>出力先の選択ボタンを押したとき。</summary>
 		private async void ButtonOutputClick(object sender, RoutedEventArgs e)
 		{
-			string path = await this.SelectFolder( );
-			if (path != "")
+			Log.Information("ButtonOutputClick");
+			this.DirectoryOutput = await this.SelectFolder(Models.EDirectoryType.Output);
+			if (this.DirectoryOutput != null)
 			{
-				this.TextBoxOutput.Text = path;
+				this.TextBoxOutput.Text = this.DirectoryOutput.Path;
 			}
 		}
 
-		/// <summary>フォルダーピッカーを表示します。不正な場合，メッセージダイアログを表示します。</summary>
-		/// <returns>フォルダーのパス。不正な場合，空文字列。</returns>
-		private async Task<string> SelectFolder( )
+		private async Task<StorageFolder> SelectFolder(Models.EDirectoryType directoryType)
 		{
-			Windows.Storage.Pickers.FolderPicker folderPicker = new Windows.Storage.Pickers.FolderPicker( );
-			folderPicker.FileTypeFilter.Add("*");
-			Windows.Storage.StorageFolder folder = await folderPicker.PickSingleFolderAsync( );
+			StorageFolder folder;
+			try
+			{
+				folder = await this.FileIO.SelectFolder(directoryType);
+			}
+			catch (ArgumentException)
+			{
+				folder = null;
+			}
 			if (folder == null)
 			{
-				DialogError dialogError = new DialogError(this.ThemeController.NowTheme, "フォルダーが見つかりませんでした。\r\n正しいフォルダーを選択してください。");
+				Log.Warning("フォルダーが見つかりません。正しいフォルダーを選択してください。");
+				DialogError dialogError = new DialogError(this.ThemeController.NowTheme, "フォルダーが見つかりません。\r\n\r\n正しいフォルダーを選択してください。");
 				await dialogError.ShowAsync( );
-				return "";
 			}
-			Windows.Storage.AccessCache.StorageApplicationPermissions.
-				FutureAccessList.AddOrReplace("PickedFolderToken", folder);
-			return folder.Path;
+			return folder;
 		}
 
 		/// <summary>変換ボタンを押したとき。</summary>
-		private void ButtonRunClick(object sender, RoutedEventArgs e)
+		private async void ButtonRunClick(object sender, RoutedEventArgs e)
 		{
+			Log.Information("ButtonRunClick");
+			try
+			{
+				this.CheckDirectory( );
+				await this.FileIO.CopyDirectory(this.DirectoryInput, this.DirectoryOutput);
+			}
+			catch (Exception exception) when (exception is ArgumentException || exception is NullReferenceException)
+			{
+				Log.Warning(exception.Message.Replace("\r\n", " "));
+				DialogError dialogError = new DialogError(this.ThemeController.NowTheme, exception.Message);
+				await dialogError.ShowAsync( );
+				return;
+			}
+			catch (Exception exception)
+			{
+				Log.Warning("想定外のエラー：" + exception.ToString( ));
+				DialogError dialogError = new DialogError(this.ThemeController.NowTheme, "想定外のエラーが発生しました。開発者に↓を伝えると修正してくれるかもしれません。\r\n\r\n" + exception.ToString( ));
+				await dialogError.ShowAsync( );
+				return;
+			}
 
+			this.Finish( );
+		}
+
+		private void CheckDirectory( )
+		{
+			if (this.DirectoryInput == null)
+			{
+				throw new NullReferenceException("変換元ディレクトリーがありません。\r\n\r\nフォルダーを選択してください。");
+			}
+			if (this.DirectoryOutput == null)
+			{
+				throw new NullReferenceException("出力先ディレクトリーがありません。\r\n\r\nフォルダーを選択してください。");
+			}
+		}
+
+		private async void Finish( )
+		{
+			Log.Information("変換完了しました。");
+			DialogFinish dialogFinish = new DialogFinish(this.ThemeController.NowTheme);
+			await dialogFinish.ShowAsync( );
 		}
 
 	}
