@@ -9,16 +9,16 @@ using Windows.Storage.Pickers;
 using Windows.Storage.AccessCache;
 using System.Diagnostics;
 using Serilog;
+using System.Text.RegularExpressions;
 
 namespace YukkuriCharacterNicotalkToYMM4.Models
 {
 	/// <summary>ファイル入出力の管理者</summary>
-	
 	public class FileIO
 	{
 		public FileIO( )
 		{
-			
+			Log.Debug("FileIO生成");
 		}
 
 		/// <summary>フォルダーピッカーを表示します。不正な場合，メッセージダイアログを表示します。</summary>
@@ -86,7 +86,7 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 			await Task.WhenAll(fromFiles.Select(async file => await file.CopyAsync(workingDirectory, file.Name, NameCollisionOption.ReplaceExisting)));
 			IReadOnlyList<StorageFolder> fromChildDirectories = await fromDirectory.GetFoldersAsync( );
 			Log.Debug("ChildDirectories：" + string.Join(", ", fromChildDirectories.Select(directory => directory.Name)));
-			if (0 < fromChildDirectories.Count( ))
+			if (fromChildDirectories.Any( ))
 			{
 				await Task.WhenAll(fromChildDirectories.Select(async directory => await this.CopyDirectoryMain(directory, workingDirectory)));
 			}

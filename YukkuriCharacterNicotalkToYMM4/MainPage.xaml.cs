@@ -9,6 +9,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,6 +26,8 @@ namespace YukkuriCharacterNicotalkToYMM4
 	/// <summary>メインページ。</summary>
 	public sealed partial class MainPage: Page
 	{
+		private CoreCursor CursorDefault = Window.Current.CoreWindow.PointerCursor;
+		private CoreCursor CursorRunning = new CoreCursor(CoreCursorType.Wait, 1);
 		private ThemeController ThemeController;
 		private Models.FileIO FileIO = new Models.FileIO( );
 		private StorageFolder DirectoryInput;
@@ -35,6 +38,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 			Log.Information("MainPage生成");
 			this.InitializeComponent( );
 			this.ThemeController = new ThemeController(this);
+			// ToDo サスペンドの対応（現状完全にリセットされる）
 		}
 
 		/// <summary>コマンドバーのコピーを押したとき。</summary>
@@ -112,9 +116,10 @@ namespace YukkuriCharacterNicotalkToYMM4
 		private async void ButtonInputClick(object sender, RoutedEventArgs e)
 		{
 			Log.Information("ButtonInputClick");
-			this.DirectoryInput = await this.SelectFolder(Models.EDirectoryType.Input);
-			if (this.DirectoryInput != null)
+			StorageFolder tempDirectory = await this.SelectFolder(Models.EDirectoryType.Input);
+			if (tempDirectory != null)
 			{
+				this.DirectoryInput = tempDirectory;
 				this.TextBoxInput.Text = this.DirectoryInput.Path;
 			}
 		}
@@ -123,9 +128,10 @@ namespace YukkuriCharacterNicotalkToYMM4
 		private async void ButtonOutputClick(object sender, RoutedEventArgs e)
 		{
 			Log.Information("ButtonOutputClick");
-			this.DirectoryOutput = await this.SelectFolder(Models.EDirectoryType.Output);
-			if (this.DirectoryOutput != null)
+			StorageFolder tempDirectory = await this.SelectFolder(Models.EDirectoryType.Output);
+			if (tempDirectory != null)
 			{
+				this.DirectoryOutput = tempDirectory;
 				this.TextBoxOutput.Text = this.DirectoryOutput.Path;
 			}
 		}
@@ -154,14 +160,19 @@ namespace YukkuriCharacterNicotalkToYMM4
 		private async void ButtonRunClick(object sender, RoutedEventArgs e)
 		{
 			Log.Information("ButtonRunClick");
+			Window.Current.CoreWindow.PointerCursor = this.CursorRunning;
+			Models.CharacterConverter characterConverter = new Models.CharacterConverter( );
 			try
 			{
 				this.CheckDirectory( );
+				characterConverter.CheckDirectory(this.DirectoryInput);
 				await this.FileIO.CopyDirectory(this.DirectoryInput, this.DirectoryOutput);
+				await characterConverter.ConvertMe(this.DirectoryInput, this.DirectoryOutput);
 			}
 			catch (Exception exception) when (exception is ArgumentException || exception is NullReferenceException)
 			{
 				Log.Warning(exception.Message.Replace("\r\n", " "));
+				Window.Current.CoreWindow.PointerCursor = this.CursorDefault;
 				DialogError dialogError = new DialogError(this.ThemeController.NowTheme, exception.Message);
 				await dialogError.ShowAsync( );
 				return;
@@ -169,6 +180,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 			catch (Exception exception)
 			{
 				Log.Warning("想定外のエラー：" + exception.ToString( ));
+				Window.Current.CoreWindow.PointerCursor = this.CursorDefault;
 				DialogError dialogError = new DialogError(this.ThemeController.NowTheme, "想定外のエラーが発生しました。開発者に↓を伝えると修正してくれるかもしれません。\r\n\r\n" + exception.ToString( ));
 				await dialogError.ShowAsync( );
 				return;
@@ -191,6 +203,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 
 		private async void Finish( )
 		{
+			Window.Current.CoreWindow.PointerCursor = this.CursorDefault;
 			Log.Information("変換完了しました。");
 			DialogFinish dialogFinish = new DialogFinish(this.ThemeController.NowTheme);
 			await dialogFinish.ShowAsync( );

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更します。
 [assembly: AssemblyTitle("YukkuriCharacterNicotalkToYMM4")]
-[assembly: AssemblyDescription("キャラ素材をnicotalk形式からゆっくりムービーメーカー4形式に変換するヤツ")]
+[assembly: AssemblyDescription("キャラ素材をnicotalk形式からゆっくりMovieMaker4形式に変換するヤツ")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("YukkuriCharacterNicotalkToYMM4")]

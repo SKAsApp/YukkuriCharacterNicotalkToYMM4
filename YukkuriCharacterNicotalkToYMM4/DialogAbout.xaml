@@ -6,7 +6,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
-	Title="ゆっくりムービーメーカー4形式に変換するヤツ について"
+	Title="ゆっくりMovieMaker4形式に変換するヤツ について"
 	PrimaryButtonText="🥺分かんない……"
 	SecondaryButtonText="😉分かった！"
 	PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
@@ -24,7 +24,7 @@
 	<Grid Background="{ThemeResource SKAbackground}" BorderBrush="#ff373737" BorderThickness="2">
 		<ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" Padding="6,3,24,3">
 			<TextBlock TextAlignment="Justify" TextWrapping="Wrap" FontFamily="Yu Gothic" FontWeight="Medium" FontSize="16" Foreground="{ThemeResource SKAforeground}" SelectionHighlightColor="{ThemeResource SKAtextboxSelect}" IsTextSelectionEnabled="True">
-				<Bold>正式名称：</Bold>「キャラ素材をnicotalk形式からゆっくりムービーメーカー4形式に変換するヤツ」<LineBreak/><LineBreak/>
+				<Bold>正式名称：</Bold>「キャラ素材をnicotalk形式からゆっくりMovieMaker4形式に変換するヤツ」<LineBreak/><LineBreak/>
 				<Bold>バージョン：</Bold>1.0.0<LineBreak/><LineBreak/>
 				<Bold>開発者：</Bold>SKA’s Web （🐤Twitter <Hyperlink NavigateUri="https://twitter.com/SK_Animation" Foreground="{ThemeResource SKAlink}">@SK_Animation</Hyperlink>）<LineBreak/><LineBreak/>
 				<Bold>使い方：</Bold><Hyperlink NavigateUri="https://github.com/SKAsApp/YukkuriCharacterNicotalkToYMM4" Foreground="{ThemeResource SKAlink}">https://github.com/SKAsApp/YukkuriCharacterNicotalkToYMM4</Hyperlink><LineBreak/>※ 注意事項は必ずお読みください。<LineBreak/><LineBreak/>
