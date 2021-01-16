@@ -61,19 +61,136 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 		}
 
 		/// <summary>「目」の変換をします。</summary>
+		/// <param name="inputDirectory">変換元ディレクトリー</param>
 		/// <param name="outputDirectory">出力先ディレクトリー</param>
 		public async Task ConvertMe(StorageFolder inputDirectory, StorageFolder outputDirectory)
 		{
 			Log.Information("「目」の変換をします。");
 			string characterName = inputDirectory.Name;
-			StorageFolder characterDirectory = outputDirectory.GetFoldersAsync( ).AsTask( ).Result.Where(directory => directory.Name == characterName).First( );
-			StorageFolder meDirectory = await characterDirectory.GetFolderAsync("目");
-			Log.Debug("「目」フォルダー：" + meDirectory.Path);
-			IReadOnlyList<StorageFile> meFiles = await meDirectory.GetFilesAsync( );
+			IReadOnlyList<StorageFile> meFiles = null;
+			try
+			{
+				StorageFolder characterDirectory = outputDirectory.GetFoldersAsync( ).AsTask( ).Result.Where(directory => directory.Name == characterName).First( );
+				StorageFolder meDirectory = await characterDirectory.GetFolderAsync("目");
+				Log.Debug("「目」フォルダー：" + meDirectory.Path);
+				meFiles = await meDirectory.GetFilesAsync( );
+			}
+			catch
+			{
+				throw new ArgumentException("「目」フォルダーの取得に失敗しました。\r\n\r\n実行中に出力ディレクトリーのファイル操作をしないでください。");
+			}
 			// aのみ（00a.pngのようなもの）を抽出
+			await this.SearchMeAs(meFiles);
+		}
+
+		/// <summary>「目」のabcパターンたちを探します。</summary>
+		/// <param name="meFiles">「目」のファイルたち</param>
+		private async Task SearchMeAs(IReadOnlyList<StorageFile> meFiles)
+		{
 			Regex animationRegex = new Regex("[0-9]{2}a.(png|PNG|gif|GIF|bmp|BMP)");
 			IEnumerable<string> animationNames = meFiles.Select(meFile => meFile.Name).AsParallel( ).Where(meFileName => animationRegex.IsMatch(meFileName));
-			Log.Debug("「目」アニメーション一覧：" + string.Join(", ", animationNames.ToList( )));
+			Log.Debug("「目」アニメーション一覧：" + string.Join(", ", animationNames));
+			Regex numberRegex = new Regex("([0-9]{2})a.(png|PNG|gif|GIF|bmp|BMP)");
+			IEnumerable<string> numberNames = animationNames.Select(fileName => numberRegex.Match(fileName).Groups[1].ToString( ));
+			Log.Debug("numberNames：" + string.Join(", ", numberNames));
+			await Task.WhenAll(numberNames.Select(async numberName => await this.RenameMeAs(meFiles, numberName)));
+		}
+
+		/// <summary>「目」のabcパターンたちの名前変更します。</summary>
+		/// <param name="meFiles">「目」のファイルたち</param>
+		/// <param name="numberName">「目」のファイルの番号（00a.pngの00の部分）</param>
+		private async Task RenameMeAs(IReadOnlyList<StorageFile> meFiles, string numberName)
+		{
+			int animatedMeFilesCount = meFiles.Where(meFile => meFile.Name.StartsWith(numberName)).Count( );
+			Log.Debug("目" + numberName + "フレーム数：" + animatedMeFilesCount.ToString( ));
+			await this.RenameMeA(meFiles, numberName, animatedMeFilesCount - 1, 0);
+		}
+
+		/// <summary>「目」のabcパターンの名前変更します。</summary>
+		/// <param name="meFiles">「目」のファイルたち</param>
+		/// <param name="numberName">「目」のファイルの番号（00a.pngの00の部分）</param>
+		/// <param name="alphabetNumber">変換前のフレームアルファベットを数字表記したもの（00a.pngのaの部分→1）</param>
+		/// <param name="frame">変換後のフレーム番号（00（まばたき）.1.pngの1の部分）</param>
+		private async Task RenameMeA(IReadOnlyList<StorageFile> meFiles, string numberName, int alphabetNumber, int frame)
+		{
+			string alphabet = this.NumberToAlphabetA(alphabetNumber);
+			StorageFile convertingMeFile = null;
+			try
+			{
+				convertingMeFile = meFiles.Where(meFile => meFile.DisplayName == numberName + alphabet).First( );
+				string extension = convertingMeFile.FileType;
+				if (alphabetNumber == 0)
+				{
+					Log.Debug("名前変更：" + convertingMeFile.Name + " → " + numberName + "（まばたき）" + extension);
+					await convertingMeFile.RenameAsync(numberName + "（まばたき）" + extension, NameCollisionOption.ReplaceExisting);
+					return;
+				}
+				Log.Debug("名前変更：" + convertingMeFile.Name + " → " + numberName + "（まばたき）." + frame + extension);
+				await convertingMeFile.RenameAsync(numberName + "（まばたき）." + frame + extension, NameCollisionOption.ReplaceExisting);
+			}
+			catch (Exception)
+			{
+				throw new ArgumentException("「目」ファイルが見つかりませんでした。\r\n\r\n実行中に出力ディレクトリーのファイル操作をしないでください。");
+			}
+			await this.RenameMeA(meFiles, numberName, alphabetNumber - 1, frame + 1);
+		}
+
+		private string NumberToAlphabetA(int number)
+		{
+			switch (number)
+			{
+				case 1:
+					return "a";
+				case 2:
+					return "b";
+				case 3:
+					return "c";
+				case 4:
+					return "d";
+				case 5:
+					return "e";
+				case 6:
+					return "f";
+				case 7:
+					return "g";
+				case 8:
+					return "h";
+				case 9:
+					return "i";
+				case 10:
+					return "j";
+				default:
+					return "";
+			}
+		}
+
+		private string NumberToAlphabetK(int number)
+		{
+			switch (number)
+			{
+				case 1:
+					return "k";
+				case 2:
+					return "l";
+				case 3:
+					return "m";
+				case 4:
+					return "n";
+				case 5:
+					return "o";
+				case 6:
+					return "p";
+				case 7:
+					return "q";
+				case 8:
+					return "r";
+				case 9:
+					return "s";
+				case 10:
+					return "t";
+				default:
+					return "";
+			}
 		}
 
 	}

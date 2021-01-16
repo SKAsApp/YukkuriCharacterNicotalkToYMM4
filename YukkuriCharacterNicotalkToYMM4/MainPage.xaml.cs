@@ -38,7 +38,6 @@ namespace YukkuriCharacterNicotalkToYMM4
 			Log.Information("MainPage生成");
 			this.InitializeComponent( );
 			this.ThemeController = new ThemeController(this);
-			// ToDo サスペンドの対応（現状完全にリセットされる）
 		}
 
 		/// <summary>コマンドバーのコピーを押したとき。</summary>
@@ -115,6 +114,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		/// <summary>変換元の選択ボタンを押したとき。</summary>
 		private async void ButtonInputClick(object sender, RoutedEventArgs e)
 		{
+			this.ButtonInput.IsEnabled = false;
 			Log.Information("ButtonInputClick");
 			StorageFolder tempDirectory = await this.SelectFolder(Models.EDirectoryType.Input);
 			if (tempDirectory != null)
@@ -122,11 +122,13 @@ namespace YukkuriCharacterNicotalkToYMM4
 				this.DirectoryInput = tempDirectory;
 				this.TextBoxInput.Text = this.DirectoryInput.Path;
 			}
+			this.ButtonInput.IsEnabled = true;
 		}
 
 		/// <summary>出力先の選択ボタンを押したとき。</summary>
 		private async void ButtonOutputClick(object sender, RoutedEventArgs e)
 		{
+			this.ButtonOutput.IsEnabled = false;
 			Log.Information("ButtonOutputClick");
 			StorageFolder tempDirectory = await this.SelectFolder(Models.EDirectoryType.Output);
 			if (tempDirectory != null)
@@ -134,6 +136,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 				this.DirectoryOutput = tempDirectory;
 				this.TextBoxOutput.Text = this.DirectoryOutput.Path;
 			}
+			this.ButtonOutput.IsEnabled = true;
 		}
 
 		private async Task<StorageFolder> SelectFolder(Models.EDirectoryType directoryType)
@@ -159,6 +162,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		/// <summary>変換ボタンを押したとき。</summary>
 		private async void ButtonRunClick(object sender, RoutedEventArgs e)
 		{
+			this.ButtonRun.IsEnabled = false;
 			Log.Information("ButtonRunClick");
 			Window.Current.CoreWindow.PointerCursor = this.CursorRunning;
 			Models.CharacterConverter characterConverter = new Models.CharacterConverter( );
@@ -175,6 +179,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 				Window.Current.CoreWindow.PointerCursor = this.CursorDefault;
 				DialogError dialogError = new DialogError(this.ThemeController.NowTheme, exception.Message);
 				await dialogError.ShowAsync( );
+				this.ButtonRun.IsEnabled = true;
 				return;
 			}
 			catch (Exception exception)
@@ -183,10 +188,12 @@ namespace YukkuriCharacterNicotalkToYMM4
 				Window.Current.CoreWindow.PointerCursor = this.CursorDefault;
 				DialogError dialogError = new DialogError(this.ThemeController.NowTheme, "想定外のエラーが発生しました。開発者に↓を伝えると修正してくれるかもしれません。\r\n\r\n" + exception.ToString( ));
 				await dialogError.ShowAsync( );
+				this.ButtonRun.IsEnabled = true;
 				return;
 			}
 
 			this.Finish( );
+			this.ButtonRun.IsEnabled = true;
 		}
 
 		private void CheckDirectory( )
