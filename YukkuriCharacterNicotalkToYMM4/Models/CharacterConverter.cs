@@ -82,18 +82,28 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 			await Task.WhenAll(this.SearchMeAs(meFiles), this.SearchMeKs(meFiles), this.SearchMeXs(meFiles), this.SearchMeYs(meFiles), this.SearchMeZs(meFiles));
 		}
 
-		/// <summary>【抽象】「目」のxxxパターンたちを探します。</summary>
+		/// <summary>【抽象】「目」または「口」のxxxパターンたちを探します。</summary>
+		/// <param name="files">「目」または「口」のファイルたち</param>
+		/// <param name="patternFirst">xxxパターンの最初の1文字（例：abcパターン→a）</param>
+		/// <param name="renamesFunc">xxxパターンたちの名前変更関数</param>
+		/// <param name="part">部位（「「目」」または「「口」」）</param>
+		private async Task Search(IReadOnlyList<StorageFile> files, string patternFirst, Func<IReadOnlyList<StorageFile>, string, Task> renamesFunc, string part)
+		{
+			Regex patternRegex = new Regex("([0-9]{2})" + patternFirst + ".(png|PNG|gif|GIF|bmp|BMP)");
+			IEnumerable<string> patternNames = files.Select(meFile => meFile.Name).AsParallel( ).Where(meFileName => patternRegex.IsMatch(meFileName));
+			Log.Debug(part + patternFirst + "一覧：" + string.Join(", ", patternNames));
+			IEnumerable<string> numberNames = patternNames.Select(fileName => patternRegex.Match(fileName).Groups[1].ToString( ));
+			Log.Debug(part + patternFirst + " numberNames：" + string.Join(", ", numberNames));
+			await Task.WhenAll(numberNames.Select(async numberName => await renamesFunc(files, numberName)));
+		}
+
+		/// <summary>「目」のxxxパターンたちを探します。</summary>
 		/// <param name="meFiles">「目」のファイルたち</param>
 		/// <param name="patternFirst">xxxパターンの最初の1文字（例：abcパターン→a）</param>
 		/// <param name="renamesFunc">xxxパターンたちの名前変更関数</param>
 		private async Task SearchMes(IReadOnlyList<StorageFile> meFiles, string patternFirst, Func<IReadOnlyList<StorageFile>, string, Task> renamesFunc)
 		{
-			Regex patternRegex = new Regex("([0-9]{2})" + patternFirst + ".(png|PNG|gif|GIF|bmp|BMP)");
-			IEnumerable<string> patternNames = meFiles.Select(meFile => meFile.Name).AsParallel( ).Where(meFileName => patternRegex.IsMatch(meFileName));
-			Log.Debug("「目」" + patternFirst + "一覧：" + string.Join(", ", patternNames));
-			IEnumerable<string> numberNames = patternNames.Select(fileName => patternRegex.Match(fileName).Groups[1].ToString( ));
-			Log.Debug("「目」" + patternFirst + " numberNames：" + string.Join(", ", numberNames));
-			await Task.WhenAll(numberNames.Select(async numberName => await renamesFunc(meFiles, numberName)));
+			await this.Search(meFiles, patternFirst, renamesFunc, "「目」");
 		}
 
 		/// <summary>【抽象】「目」のxxxパターンたちの名前を変更します。</summary>
@@ -103,7 +113,7 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 		private async Task RenameMes(IReadOnlyList<StorageFile> meFiles, string numberName, Func<IReadOnlyList<StorageFile>, string, int, int, Task> renameFunc)
 		{
 			int animatedMeFilesCount = meFiles.Where(meFile => meFile.Name.StartsWith(numberName)).Count( );
-			Log.Debug("目" + numberName + "フレーム数：" + animatedMeFilesCount.ToString( ));
+			Log.Debug("「目」" + numberName + "フレーム数：" + animatedMeFilesCount.ToString( ));
 			await renameFunc(meFiles, numberName, animatedMeFilesCount - 1, 0);
 		}
 
@@ -310,6 +320,75 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 				default:
 					return "";
 			}
+		}
+
+		/// <summary>「口」の変換をします。</summary>
+		/// <param name="inputDirectory">変換元ディレクトリー</param>
+		/// <param name="outputDirectory">出力先ディレクトリー</param>
+		public async Task ConvertMouth(StorageFolder inputDirectory, StorageFolder outputDirectory)
+		{
+			Log.Information("「口」の変換をします。");
+			string characterName = inputDirectory.Name;
+			IReadOnlyList<StorageFile> mouthFiles = null;
+			try
+			{
+				StorageFolder characterDirectory = outputDirectory.GetFoldersAsync( ).AsTask( ).Result.Where(directory => directory.Name == characterName).First( );
+				StorageFolder mouthDirectory = await characterDirectory.GetFolderAsync("口");
+				Log.Debug("「口」フォルダー：" + mouthDirectory.Path);
+				mouthFiles = await mouthDirectory.GetFilesAsync( );
+			}
+			catch
+			{
+				throw new ArgumentException("「口」フォルダーの取得に失敗しました。\r\n\r\n実行中に出力ディレクトリーのファイル操作をしないでください。");
+			}
+			await this.SearchMouths(mouthFiles);
+		}
+
+		/// <summary>「口」のabcパターンたちを探します。</summary>
+		/// <param name="mouthFiles">「口」のファイルたち</param>
+		private async Task SearchMouths(IReadOnlyList<StorageFile> mouthFiles)
+		{
+			await this.Search(mouthFiles, "a", this.RenameMouths, "「口」");
+		}
+
+		/// <summary>「口」のabcパターンたちの名前を変更します。</summary>
+		/// <param name="mouthFiles">「口」のファイルたち</param>
+		/// <param name="numberName">「口」のファイルの番号（例：00a.pngの00の部分）</param>
+		private async Task RenameMouths(IReadOnlyList<StorageFile> mouthFiles, string numberName)
+		{
+			int animatedMouthFilesCount = mouthFiles.Where(mouthFile => mouthFile.Name.StartsWith(numberName)).Count( );
+			Log.Debug("「口」" + numberName + "フレーム数：" + animatedMouthFilesCount.ToString( ));
+			await this.RenameMouth(mouthFiles, numberName, animatedMouthFilesCount, 0, 0);
+		}
+
+		/// <summary>「口」のひとつのabcパターンの名前を変更します。</summary>
+		/// <param name="mouthFiles">「口」のファイルたち</param>
+		/// <param name="numberName">「口」のファイルの番号（例：00a.pngの00の部分）</param>
+		/// <param name="frameLength">フレーム総数</param>
+		/// <param name="alphabetNumber">変換前のフレームアルファベットを数字表記したもの（例：00a.pngのaの部分→1）</param>
+		/// <param name="frame">変換後のフレーム番号（例：00（口パク）.1.pngの1の部分）</param>
+		private async Task RenameMouth(IReadOnlyList<StorageFile> mouthFiles, string numberName, int frameLength, int alphabetNumber, int frame)
+		{
+			string alphabet = this.NumberToAlphabetA(alphabetNumber);
+			StorageFile convertingMouthFile = null;
+			try
+			{
+				convertingMouthFile = mouthFiles.Where(mouthFile => mouthFile.DisplayName == numberName + alphabet).First( );
+				string extension = convertingMouthFile.FileType;
+				if (alphabetNumber == frameLength - 1)
+				{
+					Log.Debug("名前変更：" + convertingMouthFile.Name + " → " + numberName + "（口パク）" + extension);
+					await convertingMouthFile.RenameAsync(numberName + "（口パク）" + extension, NameCollisionOption.ReplaceExisting);
+					return;
+				}
+				Log.Debug("名前変更：" + convertingMouthFile.Name + " → " + numberName + "（口パク）." + frame + extension);
+				await convertingMouthFile.RenameAsync(numberName + "（口パク）." + frame + extension, NameCollisionOption.ReplaceExisting);
+			}
+			catch (Exception)
+			{
+				throw new ArgumentException("「口」ファイルが見つかりませんでした。\r\n\r\n実行中に出力ディレクトリーのファイル操作をしないでください。");
+			}
+			await this.RenameMouth(mouthFiles, numberName, frameLength, alphabetNumber + 1, frame + 1);
 		}
 
 	}

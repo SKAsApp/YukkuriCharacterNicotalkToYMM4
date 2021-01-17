@@ -171,7 +171,8 @@ namespace YukkuriCharacterNicotalkToYMM4
 				this.CheckDirectory( );
 				characterConverter.CheckDirectory(this.DirectoryInput);
 				await this.FileIO.CopyDirectory(this.DirectoryInput, this.DirectoryOutput);
-				await characterConverter.ConvertMe(this.DirectoryInput, this.DirectoryOutput);
+				await Task.WhenAll(characterConverter.ConvertMe(this.DirectoryInput, this.DirectoryOutput), characterConverter.ConvertMouth(this.DirectoryInput, this.DirectoryOutput));
+				// TODO: 他の変換
 			}
 			catch (Exception exception) when (exception is ArgumentException || exception is NullReferenceException)
 			{
