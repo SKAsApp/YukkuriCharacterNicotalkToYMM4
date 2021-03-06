@@ -143,9 +143,15 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\FaceConverter.cs" />
+    <Compile Include="Models\OtherConverters.cs" />
+    <Compile Include="Models\OtherConverter.cs" />
+    <Compile Include="Models\MouthConverter.cs" />
+    <Compile Include="Models\MeConverter.cs" />
     <Compile Include="Models\CharacterConverter.cs" />
     <Compile Include="Models\EDirectoryType.cs" />
     <Compile Include="Models\FileIO.cs" />
+    <Compile Include="Models\ICharacterConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThemeController.cs" />
   </ItemGroup>

@@ -165,14 +165,15 @@ namespace YukkuriCharacterNicotalkToYMM4
 			this.ButtonRun.IsEnabled = false;
 			Log.Information("ButtonRunClick");
 			Window.Current.CoreWindow.PointerCursor = this.CursorRunning;
-			Models.CharacterConverter characterConverter = new Models.CharacterConverter( );
+			Models.MeConverter meConverter = new Models.MeConverter( );
+			Models.MouthConverter mouthConverter = new Models.MouthConverter( );
+			Models.OtherConverters otherConverters = new Models.OtherConverters( );
 			try
 			{
 				this.CheckDirectory( );
-				characterConverter.CheckDirectory(this.DirectoryInput);
+				meConverter.CheckDirectory(this.DirectoryInput);
 				await this.FileIO.CopyDirectory(this.DirectoryInput, this.DirectoryOutput);
-				await Task.WhenAll(characterConverter.ConvertMe(this.DirectoryInput, this.DirectoryOutput), characterConverter.ConvertMouth(this.DirectoryInput, this.DirectoryOutput));
-				// TODO: 他の変換
+				await Task.WhenAll(meConverter.Convert(this.DirectoryInput, this.DirectoryOutput), mouthConverter.Convert(this.DirectoryInput, this.DirectoryOutput), otherConverters.Convert(this.DirectoryInput, this.DirectoryOutput));
 			}
 			catch (Exception exception) when (exception is ArgumentException || exception is NullReferenceException)
 			{

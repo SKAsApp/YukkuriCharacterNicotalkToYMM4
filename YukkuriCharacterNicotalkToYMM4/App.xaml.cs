@@ -36,7 +36,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 			this.InitializeComponent( );
 			this.Suspending += this.OnSuspending;
 			this.SerilogSetting( );
-			Log.Information("アプリ起動");
+			Log.Information("\r\n\r\n\r\nアプリ起動");
 		}
 
 		private void SerilogSetting( )
@@ -47,7 +47,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 				.MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
 				.MinimumLevel.Override("System", LogEventLevel.Warning)
 				.WriteTo.Debug( )
-				.WriteTo.File(path: logFilePath, formatter: new JsonFormatter( ), rollingInterval: RollingInterval.Day)
+				.WriteTo.File(path: logFilePath, rollingInterval: RollingInterval.Day)
 				.CreateLogger( );
 		}
 
@@ -77,7 +77,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 
 				if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
 				{
-					//TODO: 以前中断したアプリケーションから状態を読み込みます
+					// 以前中断したアプリケーションから状態を読み込みます
 				}
 
 				// フレームを現在のウィンドウに配置します
@@ -119,7 +119,7 @@ namespace YukkuriCharacterNicotalkToYMM4
 		{
 			Log.Debug("OnSuspending");
 			var deferral = e.SuspendingOperation.GetDeferral( );
-			//TODO: アプリケーションの状態を保存してバックグラウンドの動作があれば停止します
+			// アプリケーションの状態を保存してバックグラウンドの動作があれば停止します
 			deferral.Complete( );
 		}
 

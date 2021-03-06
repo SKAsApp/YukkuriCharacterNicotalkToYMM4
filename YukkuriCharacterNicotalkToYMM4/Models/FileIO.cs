@@ -78,14 +78,13 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 		/// <param name="toDirectory">コピー先ディレクトリー</param>
 		private async Task CopyDirectoryMain(StorageFolder fromDirectory, StorageFolder toDirectory)
 		{
-			Log.Debug("CopyDirectoryMain");
 			StorageFolder workingDirectory = await toDirectory.CreateFolderAsync(fromDirectory.Name, CreationCollisionOption.ReplaceExisting);
 			Log.Debug("WorkingDirectory：" + workingDirectory.Path);
 			IReadOnlyList<StorageFile> fromFiles = await fromDirectory.GetFilesAsync( );
-			Log.Debug("fromFiles：" + string.Join(", ", fromFiles.Select(file => file.Name)));
+			Log.Debug("「" + fromDirectory.Name + "」fromFiles：" + string.Join(", ", fromFiles.Select(file => file.Name)));
 			await Task.WhenAll(fromFiles.Select(async file => await file.CopyAsync(workingDirectory, file.Name, NameCollisionOption.ReplaceExisting)));
 			IReadOnlyList<StorageFolder> fromChildDirectories = await fromDirectory.GetFoldersAsync( );
-			Log.Debug("ChildDirectories：" + string.Join(", ", fromChildDirectories.Select(directory => directory.Name)));
+			Log.Debug("「" + fromDirectory.Name + "」fromChildDirectories：" + string.Join(", ", fromChildDirectories.Select(directory => directory.Name)));
 			if (fromChildDirectories.Any( ))
 			{
 				await Task.WhenAll(fromChildDirectories.Select(async directory => await this.CopyDirectoryMain(directory, workingDirectory)));
