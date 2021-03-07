@@ -1,14 +1,9 @@
 ﻿using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace YukkuriCharacterNicotalkToYMM4.Models
-{ 
+{
 	/// <summary>「その他」一括変換器</summary>
 	public class OtherConverters: CharacterConverter
 	{
@@ -24,7 +19,10 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 		{
 			Log.Information("「他」を一括で変換します。");
 			FaceConverter faceConverter = new FaceConverter( );
-			await Task.WhenAll(faceConverter.Convert(inputDirectory, outputDirectory));
+			BehindConverter behindConverter = new BehindConverter( );
+			await Task.WhenAll(
+				faceConverter.Convert(inputDirectory, outputDirectory), 
+				behindConverter.Convert(inputDirectory, outputDirectory));
 		}
 
 	}

@@ -2,13 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace YukkuriCharacterNicotalkToYMM4.Models
-{ 
+{
 	/// <summary>「その他」変換器</summary>
 	public class OtherConverter: CharacterConverter
 	{
@@ -18,6 +16,8 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 		protected StorageFolder OtherDirectory { get; set; } = null;
 		/// <summary>部位ディレクトリー</summary>
 		protected StorageFolder VDirectory { get; private set; } = null;
+		/// <summary>部位ディレクトリーがあるか</summary>
+		protected bool HasVDirectory { get; private set; } = false;
 		/// <summary>部位ファイルたち</summary>
 		protected IReadOnlyList<StorageFile> VFiles { get; private set; } = null;
 
@@ -47,6 +47,7 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 				}
 				Log.Debug("「" + this.VName + "」フォルダー：" + this.VDirectory.Path);
 				this.VFiles = await this.VDirectory.GetFilesAsync( );
+				this.HasVDirectory = true;
 			}
 			catch
 			{
@@ -61,13 +62,13 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 		/// <param name="vFiles">その他の部位のファイルたち</param>
 		/// <param name="numberName">その他の部位のファイルの番号（例：00a.pngの00の部分）</param>
 		/// <param name="alphabet">アルファベット（例：00a.pngのaの部分），ない場合，空文字列</param>
-		/// <param name="note">注釈（例：顔の00a.png⇒「（赤面）」）</param>
+		/// <param name="note">注釈（例：顔の00a.png⇒「【非対応】（赤面）」）</param>
 		protected async Task Rename(IReadOnlyList<StorageFile> vFiles, string numberName, string alphabet, string note)
 		{
 			StorageFile convertingVFile = null;
 			try
 			{
-				convertingVFile = vFiles.Where(faceFile => faceFile.DisplayName == numberName + alphabet).First( );
+				convertingVFile = vFiles.Where(vFile => vFile.DisplayName == numberName + alphabet).First( );
 				string extension = convertingVFile.FileType;
 				Log.Debug("「" + this.VName + "」移動：" + convertingVFile.Name + " → " + this.VName + "_" + numberName + alphabet + note + extension);
 				await this.MoveOther(convertingVFile, this.VName + "_" + numberName + alphabet + note + extension);
@@ -76,6 +77,33 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 			{
 				throw new ArgumentException("「" + this.VName + "」ファイルが見つかりませんでした。\r\n\r\n実行中に出力ディレクトリーのファイル操作をしないでください。");
 			}
+		}
+
+		/// <summary>その他の部位のすべての名前を変更し，移動します。</summary>
+		/// <param name="vFiles">その他の部位のファイルたち</param>
+		/// <param name="note">注釈（例：顔の00a.png⇒「【非対応】（赤面）」）</param>
+		protected async Task RenameAll(IReadOnlyList<StorageFile> vFiles, string note)
+		{
+			Log.Debug("「" + this.VName + "」すべて移動します。");
+			try
+			{
+				IEnumerable<StorageFile> convertingVFiles = vFiles.Where(vFile => !vFile.DisplayName.StartsWith(this.VName + "_"));
+				await Task.WhenAll(convertingVFiles.Select(vFile => this.RenameAllOne(vFile, note)));
+			}
+			catch (Exception)
+			{
+				throw new ArgumentException("「" + this.VName + "」ファイルが見つかりませんでした。\r\n\r\n実行中に出力ディレクトリーのファイル操作をしないでください。");
+			}
+		}
+
+		/// <summary>その他の部位のひとつの名前を変更し，移動します。</summary>
+		/// <param name="convertingVFile">その他の部位のファイル</param>
+		/// <param name="note">注釈（例：顔の00a.png⇒「【非対応】（赤面）」）</param>
+		private async Task RenameAllOne(StorageFile convertingVFile, string note)
+		{
+			string extension = convertingVFile.FileType;
+			Log.Debug("「" + this.VName + "」移動：" + convertingVFile.Name + " → " + this.VName + "_" + convertingVFile.DisplayName + note + extension);
+			await this.MoveOther(convertingVFile, this.VName + "_" + convertingVFile.DisplayName + note + extension);
 		}
 
 		/// <summary>「他」フォルダーへ移動し，名前を変更します。</summary>

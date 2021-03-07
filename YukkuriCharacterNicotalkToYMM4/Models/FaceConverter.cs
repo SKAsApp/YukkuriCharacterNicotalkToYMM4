@@ -1,9 +1,5 @@
 ﻿using Serilog;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -24,7 +20,12 @@ namespace YukkuriCharacterNicotalkToYMM4.Models
 		public override async Task Convert(StorageFolder inputDirectory, StorageFolder outputDirectory)
 		{
 			await base.Convert(inputDirectory, outputDirectory);
+			if (!this.HasVDirectory)
+			{
+				return;
+			}
 			await Task.WhenAll(this.SearchFaceAs(this.VFiles), this.SearchFaceBs(this.VFiles));
+			await this.RenameAll(this.VFiles, "【非対応】");
 			await this.RemoveVDirectory( );
 		}
 

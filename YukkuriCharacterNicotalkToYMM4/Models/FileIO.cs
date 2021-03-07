@@ -1,15 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.Storage.AccessCache;
-using System.Diagnostics;
-using Serilog;
-using System.Text.RegularExpressions;
+using Windows.Storage.Pickers;
 
 namespace YukkuriCharacterNicotalkToYMM4.Models
 {
